@@ -1,0 +1,6 @@
+aws_region = "eu-west-1"
+vpc_cidr = "10.0.0.0/16"
+instance_type = "t3.small"
+my_ip = "197.211.59.102/32"
+name_prefix = "ansiterra"
+key_pair = "gridsynk-keypair"
