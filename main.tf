@@ -90,7 +90,7 @@ resource "aws_security_group" "secterra-sg" {
   }
 
   ingress {
-    description = ""
+    description = "Application port"
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
@@ -144,7 +144,7 @@ resource "aws_instance" "public" {
 
   associate_public_ip_address = true
 
-  tags = { Name = "${var.name_prefix}-public-instance" }
+  tags = { Name = "${var.name_prefix}-public-instance-${count.index + 1}" }
 }
 
 

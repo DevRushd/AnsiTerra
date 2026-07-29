@@ -58,32 +58,13 @@ terraform output public_instance_public_ip
 
 ## Limitations
 
-1. **No Ansible files** — The project name implies Ansible integration, but no playbooks, inventory files, `ansible.cfg`, or dynamic inventory scripts are included. Ansible configuration management is not yet implemented.
-
 1. **Backend still in bootstrap** — The `backend.tf` and `backend-resources.tf` files are present, but you must run the bootstrap steps (see Usage) before the remote backend is active. Until then, state remains local.
 
-2. **SSH exposed to全世界** — Security group allows SSH from `0.0.0.0/0` (line 73) in addition to the admin IP restriction (line 65). The `0.0.0.0/0` rule makes the admin IP restriction redundant and opens SSH to the internet.
+2. **SSH exposed to public** — Security group allows SSH from `0.0.0.0/0` (line 73) in addition to the admin IP restriction (line 65). The `0.0.0.0/0` rule makes the admin IP restriction redundant and opens SSH to the internet.
 
 3. **All subnets are public** — No private subnets, NAT gateway, or bastion host. Instances have public IPs and are directly reachable from the internet, which is not a production-grade network layout.
 
-4. **Port 8080 lacks description** — Ingress rule for port 8080 (line 93) has an empty `description` field, making its purpose unclear.
+4. **Hardcoded instance count** — The `count = 3` is hardcoded in `main.tf:143` instead of being parameterized as a variable.
 
-5. **Duplicate Name tag on instances** — All 3 instances get the identical tag `ansiterra-public-instance` (no index suffix), making them indistinguishable in the AWS console.
+5. **Single subnet for all instances** — All 3 instances are placed in `aws_subnet.public[0]`, ignoring the second available subnet. There is no distribution across subnets.
 
-6. **Hardcoded instance count** — The `count = 3` is hardcoded in `main.tf:143` instead of being parameterized as a variable.
-
-7. ~~**Local Terraform state** — Fixed. S3 remote backend with DynamoDB locking is configured in `backend.tf`.~~
-
-8. ~~**State files committed** — Fixed. `.gitignore` now excludes state files. You must run `git rm --cached terraform.tfstate terraform.tfstate.backup` to stop tracking them.~~
-
-9. ~~**No `.gitignore`** — Fixed. `.gitignore` now excludes state files, `.terraform/` directory, crash logs, and override files.~~
-
-10. **No Terraform version constraints** — Neither `required_version` nor provider version constraints are specified, which can lead to unexpected behavior with different Terraform versions.
-
-11. **Key pair not managed** — The EC2 key pair (`gridsynk-keypair`) is expected to pre-exist in AWS. Terraform does not create or manage it.
-
-12. **No provisioners** — There are no `provisioner` blocks or `remote-exec` to bootstrap instances or trigger Ansible after provisioning.
-
-13. **Single subnet for all instances** — All 3 instances are placed in `aws_subnet.public[0]`, ignoring the second available subnet. There is no distribution across subnets.
-
-14. **Limited outputs** — Only public IPs are output. No private IPs, instance IDs, VPC ID, subnet IDs, or security group IDs are exposed.
